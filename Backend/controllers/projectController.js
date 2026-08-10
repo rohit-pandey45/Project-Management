@@ -1,4 +1,4 @@
-
+import prisma from "../config/prisma.js";
 
 //Create Project
 export const createProject = async (req, res) => {
