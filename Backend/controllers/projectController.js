@@ -101,10 +101,10 @@ export const updateProject = async (req, res) => {
             }
         }
 
-        const project = await prisma.project.update({
+        const updatedProject = await prisma.project.update({
             where: {id},
         data: {
-            workspaceId,
+            //workspaceId,
             name,
             description,
             status,
