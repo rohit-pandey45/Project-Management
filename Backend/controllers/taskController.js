@@ -9,7 +9,7 @@ export const createTask = async (req, res) => {
         const origin = req.get('origin')
 
         //Check if user has admin role for project
-        const project = await prisma.object.findUnique({
+        const project = await prisma.project.findUnique({
             where: {id: projectId},
             include: {members: {include: {user: true}}}
         })
@@ -20,7 +20,7 @@ export const createTask = async (req, res) => {
         else if (project.team_lead !== userId){
             return res.status(403).json({ message: "You don't have admin privileges for this project" });
         }
-        else if (assigneeId && !project.members,find((member) => member.user.id === assigneeId)){
+        else if (assigneeId && !project.members.find((member) => member.user.id === assigneeId)){
             return res.status(403).json({ message: "assignee is not a member of the project / workspace"});
         }
 
@@ -29,10 +29,11 @@ export const createTask = async (req, res) => {
                 projectId,
                 title,
                 description,
+                type,
                 priority,
                 assigneeId,
                 status,
-                due_data: new Date(due_date)
+                due_date: new Date(due_date)
             }
         })
 
@@ -70,7 +71,7 @@ export const updateTask = async (req, res) => {
 
         const {userId} = await req.auth();
 
-        const project = await prisma.object.findUnique({
+        const project = await prisma.project.findUnique({
             where: {id: task.projectId},
             include: {members: {include: {user: true}}}
         })
@@ -101,14 +102,14 @@ export const deleteTask = async (req, res) => {
         const {userId} = await req.auth();
         const {tasksIds} = req.body
         const tasks = await prisma.task.findMany({
-            where: {id: {in: tasksId}}
+            where: {id: {in: tasksIds}}
         })
 
         if(tasks.length == 0){
             return res.status(404).json({ message: "Task not found"});
         }
 
-        const project = await prisma.object.findUnique({
+        const project = await prisma.project.findUnique({
             where: {id: tasks[0].projectId},
             include: {members: {include: {user: true}}}
         })

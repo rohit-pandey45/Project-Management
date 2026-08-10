@@ -78,7 +78,7 @@ export const createProject = async (req, res) => {
 export const updateProject = async (req, res) => {
     try {
         const {userId} = await req.auth();
-        const {workspaceId, description, name, status, start_date, end_date, team_members, team_lead, progress, priority} = req.body;
+        const {id, workspaceId, description, name, status, start_date, end_date, team_members, team_lead, progress, priority} = req.body;
 
         //Check if user has admin role for this workspace
         const workspace = await prisma.workspace.findUnique({where: {id: workspaceId},
@@ -89,8 +89,8 @@ export const updateProject = async (req, res) => {
             return res.status(404).json({ message: "Workspace not found" });
         }
 
-        if(!workspace.member.some((member)=>member.userId === userId && member.role == "ADMIN")){
-            const project = await prisma.object.findUnique({
+        if(!workspace.members.some((member)=>member.userId === userId && member.role == "ADMIN")){
+            const project = await prisma.project.findUnique({
                 where: {id}
             })
             if(!project){
@@ -101,7 +101,7 @@ export const updateProject = async (req, res) => {
             }
         }
 
-        const project = await prisma.project.create({
+        const project = await prisma.project.update({
             where: {id},
         data: {
             workspaceId,
@@ -115,8 +115,11 @@ export const updateProject = async (req, res) => {
             end_date: end_date ? new Date(end_date) : null,
         }
     })
-
-    res.status(500).json({ message: error.code || error.message })
+    res.json({
+    project: updatedProject,
+    message: "Project updated successfully"
+    });
+    //res.status(500).json({ message: error.code || error.message })
 
     } catch (error) {
         console.log(error);

@@ -4,7 +4,7 @@ import { addComment, getTaskComment } from "../controllers/commentController.js"
 
 const commentRouter = express.Router()
 commentRouter.post('/', addComment);
-commentRouter.post('/:taskId', getTaskComment);
+commentRouter.get('/:taskId', getTaskComment);
 
 
 export default commentRouter
