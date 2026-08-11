@@ -64,7 +64,7 @@ export const addMember = async (req, res) => {
         }
 
         //Checking if user is already a member
-        const existingMember = workspace.members.find((member) => member.userId === userId);
+        const existingMember = workspace.members.find((member) => member.userId === user.id);
 
         if(existingMember){
             return res.status(400).json({message: "User is already a menber"})
