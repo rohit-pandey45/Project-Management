@@ -17,12 +17,14 @@ const sendEmail = async (to, subject, body) => {
       subject,  
       html: body, 
     });
+    console.log("Message sent: %s", response.messageId);
     return response
-    console.log("Message sent: %s", info.messageId);
+    
     // Preview URL is only available when using an Ethereal test account
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   } catch (err) {
     console.error("Error while sending mail:", err);
+    throw err;
   }
 };
 
